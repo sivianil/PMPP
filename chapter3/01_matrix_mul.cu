@@ -4,22 +4,28 @@
 __global__ void MatrixMulKernel(float *Md, float *Nd, float *Pd, int Width)
 {
     // Kernel code
-    int row = blockIdx.x * blockDim.x + threadIdx.x;
-    int col = blockIdx.y * blockDim.y + threadIdx.y;
+    // CUDA uses cartersian coordinates to identify threads in a block and blocks in a grid.
+    // Each thread has a unique thread index within its block, and each block has a unique block index within the grid.
+    // The combination of these indices allows each thread to compute its own unique element in the output matrix.
+    // (x, y, z) coordinates of the thread
+    // x-axis horizontal. Moving along the x-axis corresponds to moving across columns
+    // y-axis vertical. Moving along the y-axis corresponds to moving across rows
+    // Thread(2,3), it refers to the thread located at column 2 and row 3 within its block.
+    // To compute the element at Row y, column x of the output matrix, it must take dot product of Row 3 of Md and column 2 of Nd.
+    // The thread will iterate over the elements of Row 3 of Md and Column 2 of Nd, multiplying corresponding elements and summing them up to compute the final value for that position in the output matrix.
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
 
-    if (row < Width && col < Width)
+    // Pvalue stores the P element that is computed by the thread
+    float Pvalue = 0;
+    for (int k = 0; k < Width; k++)
     {
-        // Pvalue stores the P element that is computed by the thread
-        float Pvalue = 0;
-        for (int k = 0; k < Width; k++)
-        {
-            float Mdelement = Md[row * Width + k];
-            float Ndelement = Nd[k * Width + col];
-            Pvalue += Mdelement * Ndelement;
-        }
-        // Write the matrix to device memory; each thread writes one element
-        Pd[row * Wdith + col] = Pvalue;
+        float Mdelement = Md[ty * Width + k];
+        float Ndelement = Nd[k * Width + tx];
+        Pvalue += Mdelement * Ndelement;
     }
+    // Write the matrix to device memory; each thread writes one element
+    Pd[ty * Wdith + tx] = Pvalue;
 }
 
 void MatrixMultiplication(float *M, float *N, float *P, int Width)
