@@ -42,5 +42,5 @@ Each chapter contains its own `.cu` files. You can compile them individually usi
 Navigate to a specific chapter's directory and compile the code:
 
 ```bash
-cd Chapter_02_Data_Parallel_Computing
-nvcc 01_vector_addition.cu -o vector_add
+cd Chapter_03_Scalable_Parallel_Execution
+nvcc 01_matrixmul.cu -o matrixmul
