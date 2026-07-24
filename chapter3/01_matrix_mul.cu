@@ -10,22 +10,19 @@ __global__ void MatrixMulKernel(float *Md, float *Nd, float *Pd, int Width)
     // (x, y, z) coordinates of the thread
     // x-axis horizontal. Moving along the x-axis corresponds to moving across columns
     // y-axis vertical. Moving along the y-axis corresponds to moving across rows
-    // Thread(2,3), it refers to the thread located at column 2 and row 3 within its block.
-    // To compute the element at Row y, column x of the output matrix, it must take dot product of Row 3 of Md and column 2 of Nd.
-    // The thread will iterate over the elements of Row 3 of Md and Column 2 of Nd, multiplying corresponding elements and summing them up to compute the final value for that position in the output matrix.
-    int tx = threadIdx.x;
-    int ty = threadIdx.y;
+    int Row = blockIdx.y * TILE_WIDTH + threadIdx.y;
+    int Col = blockIdx.x * TILE_WIDTH + threadIdx.x;
 
     // Pvalue stores the P element that is computed by the thread
     float Pvalue = 0;
     for (int k = 0; k < Width; k++)
     {
-        float Mdelement = Md[ty * Width + k];
-        float Ndelement = Nd[k * Width + tx];
+        float Mdelement = Md[Row * Width + k];
+        float Ndelement = Nd[k * Width + Col];
         Pvalue += Mdelement * Ndelement;
     }
     // Write the matrix to device memory; each thread writes one element
-    Pd[ty * Wdith + tx] = Pvalue;
+    Pd[Row * Wdith + Col] = Pvalue;
 }
 
 void MatrixMultiplication(float *M, float *N, float *P, int Width)
@@ -47,8 +44,9 @@ void MatrixMultiplication(float *M, float *N, float *P, int Width)
 
     // Part2: Kernel Invocation
     // Define the block size and grid size for the kernel launch
-    dim3 dimBlock(Width, Width);
-    dim3 dimGrid(1, 1);
+    // The dimensiones of a block are defined by TILE_WIDTH, which is a constant that specifies the number of threads in each block along the x and y dimensions.
+    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
+    dim3 dimGrid(Width / TILE_WIDTH, Width / TILE_WIDTH);
 
     // Launch the kernel function to perform matrix multiplication on the device
     MatrixMulKernel<<<dimGrid, dimBlock>>>(Md, Nd, Pd, Width);
