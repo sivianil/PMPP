@@ -54,16 +54,19 @@
 ### 2.2 Thread Hierarchy
 
 - **Thread**:
-  - Definition:
-  - Characteristics:
+  - Definition: Threads do the work in parallel. All threads execute the same instructions but with different inputs (SIMT). 
+  - Characteristics: 
 
 - **Block**:
-  - Definition:
-  - Max Threads per Block:
+  - Definition: Blocks are group of threads. Each block runs on a SM w/ its own shared memory. 
+  - Max Threads per Block: Each block can accommodate unto 512threads. 
   - Synchronization:
-
+    
+- **Warps**:
+  - Definition: Scheduling unit of what is happening inside of the GPU. Threads always execute in "warp" of 32 consecutively numbered threads each. It decreases the overhead of scheduler deciding which threads to run.
+    
 - **Grid**:
-  - Definition:
+  - Definition: 
   - Multiple Grids:
   - Grid Dimensions:
 
@@ -134,14 +137,14 @@
 
 ### 4.1 Host (CPU)
 
-- **Role**: Host is a traditional CPU in personal computers. It runs the OS, handles I/O operations, and executes the main, sequential parts of a program.
-- **Responsibilities**: Directs the overall flow of the application. The host allocates memory on the device, transfers data to it, initiates the workload, and eventually retrieves the result.
+- **Role**: Host is a traditional CPU in personal computers. It runs the OS, handles I/O operations, and executes the main, sequential parts of a program. 
+- **Responsibilities**: Directs the overall flow of the application. The host allocates memory on the device, transfers data to it, initiates the workload, and eventually retrieves the result. CPUs optimise for latency (each thread finishes quickly).
 - **Examples**:
 
 ### 4.2 Device (GPU)
 
 - **Role**: The device acts as a highly specialized, massively parallel co-processor equipped with a large number of arithmetic execution units. It only executes functions called `kernels` specifically handed to it by the host.
-- **Responsibilities**: It takes heavy, compute intensive tasks - that require performing the same mathematical operations on massive amounts of data simulataneously and crunches them across thousands of tiny-processing cores.
+- **Responsibilities**: It takes heavy, compute intensive tasks - that require performing the same mathematical operations on massive amounts of data simulataneously and crunches them across thousands of tiny-processing cores. GPUs optimise for throughput (total processed data).
 - **Kernel Execution**: CUDA extends C function call syntax with kernel execution configuration parameters surrounded by <<< and >>>. The execution parameters are defined by dimensions of the grid and dimensions of the block. 
 ```
   // Execution configuration setup
