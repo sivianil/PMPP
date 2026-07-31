@@ -42,14 +42,18 @@
 
 ### 2.1 GPU Hardware Model
 
+- **What Is a GPU?**:
+  - A modern GPU (e.g H100 or B200) is a bunch of compute cores specialised in matrix multiplication (called Streaming Multiprocessors or SMs) connected to a stick of fast memory (called HBM).
+  - [Abstract Layout of H100 or B200 GPU](gpu-diagram.png)
+
 - **Device Components**:
-  - SM (Streaming Multiprocessor):
-    - Cores per SM:
-    - L1 Cache:
-    - Shared Memory:
-  - Global Memory:
-  - Constant Memory:
-  - Texture Memory:
+  - SM (Streaming Multiprocessor): Each SM has a dedicated matrix multiplication core (called `Tensor Core`), a vector arithmetic unit (called `Warp Scheduler`), and a fast on-chip cache (called `SMEM/L1 Cache`).
+  - A modern GPU has more than 100 SMs. H132 has 132 and B200 has 148 SMs.
+  - Each SM is broken up into 4 sub-partitions (also called SM subpartitions). Each containing a Tensor Core, 16k 32-bit registers, and a SIMD/SIMT vector arithmetic unit called `Warp Scheduler`, whose lanes (ALUs) Nvidia calls `CUDA Cores`.
+  - **CUDA Cores**: Set of ALUs within a each partition that do SIMD/SIMT vector arithmetic. Each ALU can only perform 1 arithmetic op each cycle e.g fp32.add.
+    - Each sub-partition consists of 32 fp-32 cores and a smaller number of int32 and fp64 cores that all execute the same instruction for each cycle.
+    - CUDA cores responsible for RELUs, point-wise vector operations and reductions (sums).
+  - **Tensor Core (TC)**:The core component of each partition which performs matrix multiplication and makes up the vast majority of the GPU FLOPs/s. On an H100 990 bf16 TFLOPs/s from TC compared to just 66 TFLOPs/s from CUDA Cores.
 
 ### 2.2 Thread Hierarchy
 
@@ -80,6 +84,10 @@
   └─ Texture Memory
 [Slowest]
 ```
+
+- **Streaming MultiProcessor** (SM):
+- **Registers**: Variables reside in the registers can be accessed at very high speed in a parallel manner. Allocated to individual threads, each thread can only access its own register.
+  - In `NVIDIA Blackwell B200`, each SM contains a register file with 64k 32-bit registers. Each bit is 4 bytes (32 bits), yielding a total register file size of `256 KB` per SM.
 
 | Memory Type | Scope  | Size | Speed | Cache |
 | ----------- | ------ | ---- | ----- | ----- |
