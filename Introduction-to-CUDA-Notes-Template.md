@@ -134,15 +134,24 @@
 
 ### 4.1 Host (CPU)
 
-- **Role**: Host acts as a general manager of the system. It runs the OS, handles I/O operations, and executes the main, sequential parts of a program.
+- **Role**: Host is a traditional CPU in personal computers. It runs the OS, handles I/O operations, and executes the main, sequential parts of a program.
 - **Responsibilities**: Directs the overall flow of the application. The host allocates memory on the device, transfers data to it, initiates the workload, and eventually retrieves the result.
 - **Examples**:
 
 ### 4.2 Device (GPU)
 
-- **Role**: The device acts as a highly specialized, massively parallel co-processor. It only executes functions called `kernels` specifically handed to it by the host.
+- **Role**: The device acts as a highly specialized, massively parallel co-processor equipped with a large number of arithmetic execution units. It only executes functions called `kernels` specifically handed to it by the host.
 - **Responsibilities**: It takes heavy, compute intensive tasks - that require performing the same mathematical operations on massive amounts of data simulataneously and crunches them across thousands of tiny-processing cores.
-- **Kernel Execution**:
+- **Kernel Execution**: CUDA extends C function call syntax with kernel execution configuration parameters surrounded by <<< and >>>. The execution parameters are defined by dimensions of the grid and dimensions of the block. 
+- ```
+  // Execution configuration setup
+  dim3 dimBlock(Width, Width)
+  dim3 dimGrid(1, 1)
+
+  //Kernel Invocation
+  kernelFunc<<<dimGrid, dimBlock>>>(arg1, arg2, arg3...)
+```
+
 
 ### 4.3 Host-Device Communication
 
