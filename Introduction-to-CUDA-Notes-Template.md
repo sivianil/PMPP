@@ -143,7 +143,7 @@
 - **Role**: The device acts as a highly specialized, massively parallel co-processor equipped with a large number of arithmetic execution units. It only executes functions called `kernels` specifically handed to it by the host.
 - **Responsibilities**: It takes heavy, compute intensive tasks - that require performing the same mathematical operations on massive amounts of data simulataneously and crunches them across thousands of tiny-processing cores.
 - **Kernel Execution**: CUDA extends C function call syntax with kernel execution configuration parameters surrounded by <<< and >>>. The execution parameters are defined by dimensions of the grid and dimensions of the block. 
-- ```
+```
   // Execution configuration setup
   dim3 dimBlock(Width, Width)
   dim3 dimGrid(1, 1)
