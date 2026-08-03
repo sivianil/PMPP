@@ -44,7 +44,7 @@
 
 - **What Is a GPU?**:
   - A modern GPU (e.g H100 or B200) is a bunch of compute cores specialised in matrix multiplication (called Streaming Multiprocessors or SMs) connected to a stick of fast memory (called HBM).
-  - [Abstract Layout of H100 or B200 GPU](gpu-diagram.png)
+  - ![Abstract Layout of H100 or B200 GPU](gpu-diagram.png)
 
 - **Device Components**:
   - SM (Streaming Multiprocessor): Each SM has a dedicated matrix multiplication core (called `Tensor Core`), a vector arithmetic unit (called `Warp Scheduler`), and a fast on-chip cache (called `SMEM/L1 Cache`).
