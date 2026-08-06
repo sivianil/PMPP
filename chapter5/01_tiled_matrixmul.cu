@@ -36,21 +36,21 @@ __global__ void TiledMatrixMulKernel(float *Md, float *Nd, float *Pd, int m, int
     float Pvalue = 0;
     // Iterate over the Md, Nd tiles to compute the Pd element
     // No of iterations = No of Phases = Width / TILE_WIDTH
-    for (int m = 0; m < n / TILE_WIDTH; m++)
+    for (int phase = 0; phase < n / TILE_WIDTH; m++)
     {
-        if (Row < m && (m * TILE_WIDTH + tx) < n)
+        if (Row < m && (phase * TILE_WIDTH + tx) < n)
         {
             // Threads in collaboration to load Md & Nd elements by accessing global memory once into shared memory
-            Mds[ty][tx] = Md[Row * n + (m * TILE_WIDTH + tx)];
+            Mds[ty][tx] = Md[Row * n + (phase * TILE_WIDTH + tx)];
         }
         else
         {
             Mds[ty][tx] = 0.0f; // Padding with 0.0f for threads that are out of bounds
         }
 
-        if ((m * TILE_WIDTH + ty) < n && Col < o)
+        if ((phase * TILE_WIDTH + ty) < n && Col < o)
         {
-            Nds[ty][tx] = Nd[(m * TILE_WIDTH + ty) * o + Col];
+            Nds[ty][tx] = Nd[(phase * TILE_WIDTH + ty) * o + Col];
         }
         else
         {
